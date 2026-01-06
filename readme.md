@@ -1,4 +1,4 @@
-# Smæshing App - Flowchart (Fixed)
+# Smæshing App - Flowchart 
 
 This file contains Mermaid flowcharts for:
 - Customer app (ordering, points, game)
