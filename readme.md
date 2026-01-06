@@ -1,4 +1,4 @@
-# Smæshing App - Flowchart
+# Smæshing App - Flowchart (Fixed)
 
 This file contains Mermaid flowcharts for:
 - Customer app (ordering, points, game)
@@ -29,7 +29,7 @@ flowchart TD
   K --> K3[Account & Privacy]
 
   %% Staff-only area
-  G --> S{Staff role? (Employee/Manager)}
+  G --> S{Staff role?}
   S -- No --> G
   S -- Yes --> C0[Compliance Section]
 ```
@@ -47,10 +47,10 @@ flowchart TD
   F --> G[Pickup Time: ASAP / Scheduled]
   G --> H[Checkout]
   H --> I{Payment Method}
-  I --> V[Vipps]
-  I --> K[Kort]
+  I -- Vipps --> V[Vipps Payment]
+  I -- Card --> K[Card Payment]
   V --> P[Payment Success]
-  K --> P[Payment Success]
+  K --> P
 
   P --> Q[Create Order in Backend]
   Q --> R[Send Order to Favrit POS]
@@ -73,7 +73,7 @@ flowchart TD
 flowchart TD
   A[Game & Points] --> B[Points Balance + Total Spend]
   B --> C{Game Unlocked?}
-  C -- No --> D[Show requirement: e.g. Spend 1000 NOK to unlock game X]
+  C -- No --> D[Show requirement: Spend 1000 NOK to unlock]
   C -- Yes --> E{Played Today?}
   E -- Yes --> F[Locked until tomorrow]
   E -- No --> G[Play Daily Game]
@@ -85,13 +85,13 @@ flowchart TD
   J --> K[Select Reward Item]
   K --> L[Generate QR Redeem Token]
   L --> M[Scan QR at Counter]
-  M --> N{Validate token in Backend}
-  N -- Yes --> O[Mark token used + Deduct points]
-  N -- No --> P[Invalid / Expired / Already used]
+  M --> N{Validate token}
+  N -- Valid --> O[Mark token used + Deduct points]
+  N -- Invalid --> P[Error: Invalid / Expired / Already used]
 
-  %% Earn points in two ways
+  %% Earn points from purchases
   Q[In-App Purchase] --> R[Earn points per NOK]
-  S[In-Store Purchase] --> T[Identify user (scan QR / phone)]
+  S[In-Store Purchase] --> T[Identify user via QR / phone]
   T --> R
   R --> B
 ```
@@ -102,19 +102,20 @@ flowchart TD
 ```mermaid
 flowchart TD
   A[Admin Panel] --> B{Push Type}
-  B --> C[Monthly Burger Announcement]
-  B --> D[Custom Push Message]
-  C --> E[Send to all users (opt-in)]
-  D --> F[Send to segment (opt-in)]
-  E --> G[User opens app -> Monthly Burger]
+  B -- Monthly Burger --> C[Monthly Burger Announcement]
+  B -- Custom Message --> D[Custom Push Message]
+  C --> E[Send to all users with opt-in]
+  D --> F[Send to segment with opt-in]
+  E --> G[User opens app]
   F --> G
+  G --> H[View Monthly Burger / Message]
 ```
 
 ---
 
-# 5) Compliance & Procedures (Staff-only)
+## 5) Compliance & Procedures (Staff-only)
 
-## 5A) Access & Entry (Employee/Manager)
+### 5A) Access & Entry (Employee/Manager)
 ```mermaid
 flowchart TD
   A[Open Compliance Section] --> B{Role}
@@ -124,37 +125,36 @@ flowchart TD
 
 ---
 
-## 5B) Manager Flow (Create, Schedule, Assign, Monitor, Resolve)
+### 5B) Manager Flow (Create, Schedule, Assign, Monitor, Resolve)
 ```mermaid
 flowchart TD
-  A[Manager Dashboard] --> B[Templates (Create/Edit Checklist)]
-  B --> B1[Add items (steps)]
-  B1 --> B2[Set required fields: yes/no, number, comment, photo optional]
-  B2 --> C[Scheduling]
-  C --> C1[Choose cadence: Daily / Weekly / Custom interval / One date]
-  C1 --> C2[Set due time + assignee(s)]
+  A[Manager Dashboard] --> B[Templates]
+  B --> B1[Create/Edit Checklist]
+  B1 --> B2[Add items and steps]
+  B2 --> B3[Set required fields]
+  B3 --> C[Scheduling]
+  
+  C --> C1[Choose cadence]
+  C1 --> C2[Set due time + assignees]
   C2 --> D[Publish tasks]
 
-  D --> E[Monitor status]
-  E --> E1[Today: due / completed / overdue]
-  E --> E2[History (all runs)]
-  E --> E3[Deviation inbox (alerts)]
+  A --> E[Monitor Status]
+  E --> E1[Today: Due / Completed / Overdue]
+  E --> E2[History: All runs]
+  E --> E3[Deviation Inbox: Alerts]
 
   E3 --> F{Deviation severity}
-  F --> F1[Low]
-  F --> F2[Medium]
-  F --> F3[High]
-  F1 --> G[Assign action + deadline]
-  F2 --> G
-  F3 --> G
-  G --> H[Comment / attach resolution evidence]
+  F -- Low --> G[Assign action + deadline]
+  F -- Medium --> G
+  F -- High --> G
+  G --> H[Comment / Attach evidence]
   H --> I[Close deviation]
   I --> E3
 ```
 
 ---
 
-## 5C) Employee Flow (Do tasks, Flag deviations, View history)
+### 5C) Employee Flow (Do tasks, Flag deviations, View history)
 ```mermaid
 flowchart TD
   A[Employee: My Tasks] --> B[Open Task / Checklist Run]
@@ -162,28 +162,33 @@ flowchart TD
   C --> D{Something wrong?}
   D -- No --> E[Submit as Completed]
   D -- Yes --> F[Create Deviation]
+  
   F --> F1[Choose severity + description]
-  F1 --> F2[Add photo/comment (optional)]
-  F2 --> G[Submit task (Completed with deviation)]
+  F1 --> F2[Add photo/comment]
+  F2 --> G[Submit task with deviation]
+  
   E --> H[Task marked completed]
   G --> H
 
-  A --> I[History]
-  I --> J[View past completions + deviations]
+  A --> I[View History]
+  I --> J[Past completions + deviations]
 ```
 
 ---
 
-## 5D) End-to-end Compliance Lifecycle (Task Run → Audit Trail)
+### 5D) End-to-end Compliance Lifecycle (Task Run → Audit Trail)
 ```mermaid
 flowchart TD
-  A[Template] --> B[Scheduled Task Created]
+  A[Template Created] --> B[Scheduled Task Created]
   B --> C[Employee Completes Run]
   C --> D{Deviation raised?}
   D -- No --> E[Run Completed]
   D -- Yes --> F[Deviation Alert to Manager]
   F --> G[Manager Assigns Fix + Deadline]
-  G --> H[Manager Closes Deviation]
-  H --> E
-  E --> I[Stored in History + Audit Log]
+  G --> H[Employee/Manager Resolves]
+  H --> I[Manager Closes Deviation]
+  I --> E
+  E --> J[Stored in History + Audit Log]
 ```
+7. **Diagram 5D**: Added missing resolution step before closing deviations
+8. **General**: Removed overly complex node labels, fixed syntax consistency, ensured all paths complete properly
