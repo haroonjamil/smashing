@@ -1,4 +1,4 @@
-# Smæshing Burger App – Full Flowchart
+# Smæshing App – Flowchart
 
 ## 1. Main App Flow
 ```mermaid
