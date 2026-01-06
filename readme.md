@@ -190,5 +190,3 @@ flowchart TD
   I --> E
   E --> J[Stored in History + Audit Log]
 ```
-7. **Diagram 5D**: Added missing resolution step before closing deviations
-8. **General**: Removed overly complex node labels, fixed syntax consistency, ensured all paths complete properly
